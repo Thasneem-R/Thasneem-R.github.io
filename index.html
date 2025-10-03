@@ -1,0 +1,228 @@
+<!--
+Astronaut Health Hub - Starter single-file website
+Save this file as `index.html` and publish as a static site (GitHub Pages, Netlify, etc.).
+
+What it includes:
+- Responsive single-page layout
+- Mode toggle: Student / Researcher / Public (changes text complexity)
+- Site-limited search that searches only NASA (.gov) using Google site: search
+- Quick links to NASA resources (LSDA, Space Biology, NTRS, Human Research Program, Data Portal, GeneLab)
+- Tutorial cards with short student-friendly text and researcher links
+
+How to publish quickly tonight:
+1. Create a GitHub repository named `yourusername.github.io` and upload this file as `index.html`.
+2. GitHub Pages will serve it at https://yourusername.github.io
+   OR
+   Use GitHub "Add file > Upload files" then go to Settings -> Pages -> choose `main` branch and `/ (root)` and Save.
+
+If you want direct edits: open this file in any text editor, modify content, and re-upload or push with git.
+
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Astronaut Health Hub — NASA resources</title>
+  <meta name="description" content="Search, learn, and explore NASA resources about astronaut health and space biology — tailored views for students, researchers, and the public." />
+  <style>
+    :root{
+      --bg:#0f1724; /* deep navy */
+      --card:#0b1220;
+      --muted:#9aa4b2;
+      --accent:#4fc3f7;
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#071021);color:#e6eef6}
+    .container{max-width:1100px;margin:32px auto;padding:20px}
+    header{display:flex;align-items:center;gap:16px}
+    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#6fe3c5);display:flex;align-items:center;justify-content:center;font-weight:700;color:#05263a}
+    h1{font-size:1.6rem;margin:0}
+    p.lead{margin:6px 0 20px;color:var(--muted)}
+
+    .top-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px}
+    .search{display:flex;gap:8px;background:var(--glass);padding:8px;border-radius:12px;align-items:center}
+    .search input{background:transparent;border:0;color:inherit;padding:8px;outline:none;width:360px;min-width:120px}
+    .btn{background:linear-gradient(90deg,var(--accent),#6fe3c5);border:0;padding:8px 12px;border-radius:10px;color:#032528;font-weight:600;cursor:pointer}
+    .mode-toggle{display:flex;gap:8px}
+    .mode-toggle button{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:6px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
+    .mode-toggle button.active{border-color:var(--accent);color:var(--accent);background:rgba(79,195,247,0.06)}
+
+    .grid{display:grid;grid-template-columns:1fr 340px;gap:18px}
+    main{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:18px;border-radius:var(--radius);box-shadow:0 6px 30px rgba(3,6,13,0.6)}
+    aside{position:sticky;top:28px;padding:16px;background:var(--card);border-radius:12px;height:max-content}
+
+    .card{background:rgba(255,255,255,0.02);padding:14px;border-radius:12px;margin-bottom:12px}
+    .card h3{margin:0 0 8px}
+    .links a{display:block;color:var(--accent);text-decoration:none;margin:6px 0}
+
+    .tutorials{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+    .tutorial{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);box-shadow:0 6px 18px rgba(2,6,12,0.5)}
+    .tutorial p{margin:8px 0;color:var(--muted);font-size:0.95rem}
+    .tutorial a{display:inline-block;margin-top:8px}
+
+    footer{margin-top:18px;color:var(--muted);font-size:0.9rem}
+
+    /* Mode visibility */
+    .student-only{display:none}
+    .researcher-only{display:none}
+    .public-only{display:none}
+    body.student .student-only{display:block}
+    body.researcher .researcher-only{display:block}
+    body.public .public-only{display:block}
+
+    @media (max-width:880px){
+      .grid{grid-template-columns:1fr}
+      .search input{width:160px}
+    }
+  </style>
+</head>
+<body class="student">
+  <div class="container">
+    <header>
+      <div class="logo">AH</div>
+      <div>
+        <h1>Astronaut Health Hub</h1>
+        <p class="lead">NASA-only resources about astronaut health, space habitats, and space biology — views for students, researchers, and the public.</p>
+      </div>
+    </header>
+
+    <div class="top-controls">
+      <div class="search card" role="search" aria-label="Search NASA resources">
+        <input id="searchInput" placeholder="Search NASA (e.g. microgravity bone loss)" aria-label="Search query" />
+        <button class="btn" id="searchBtn">Search NASA</button>
+      </div>
+
+      <div class="mode-toggle card" role="tablist" aria-label="Choose audience view">
+        <button id="studentBtn" class="active" aria-pressed="true">Student</button>
+        <button id="researcherBtn">Researcher</button>
+        <button id="publicBtn">Public</button>
+      </div>
+
+      <div style="margin-left:auto;color:var(--muted);align-self:center">Tip: click any tutorial to open NASA sources.</div>
+    </div>
+
+    <div class="grid">
+      <main>
+        <section class="card">
+          <h2>Quick start</h2>
+          <div class="student-only">
+            <p>Welcome! Use the search bar to look through NASA's websites (we only show NASA results). Try: <em>"plants ISS Veggie"</em> or <em>"astronaut bone loss"</em>.</p>
+          </div>
+          <div class="researcher-only">
+            <p>Use the search to find NTRS reports, GeneLab datasets, and Human Research Program documents. For dataset downloads, visit GeneLab or data.nasa.gov links in the right panel.</p>
+          </div>
+          <div class="public-only">
+            <p>Explore topics with short explainers below, or click the NASA links to read original material written by NASA scientists and communicators.</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>Tutorials</h3>
+          <div class="tutorials" id="tutorialList">
+            <article class="tutorial" tabindex="0">
+              <h4>How microgravity affects bones</h4>
+              <p class="student-only">Bones can lose density in space. This tutorial explains it with simple diagrams and what astronauts do to reduce bone loss.</p>
+              <p class="researcher-only">Summary of physiological changes, countermeasures, and links to research (NTRS, Human Research Program). Includes references to bone-density datasets and exercise protocols.</p>
+              <p class="public-only">Short explanation: in microgravity, bones no longer bear weight so the body reduces bone mass — astronauts exercise daily to reduce this.</p>
+              <a class="btn" href="https://ntrs.nasa.gov/" target="_blank" rel="noopener">Open NASA reports (NTRS)</a>
+            </article>
+
+            <article class="tutorial" tabindex="0">
+              <h4>Growing plants on the ISS</h4>
+              <p class="student-only">See how astronauts grow lettuce and other plants in space using special plant habitats like Veggie and the Advanced Plant Habitat.</p>
+              <p class="researcher-only">Links to GeneLab omics datasets and Veggie experiment logs for analysis. Includes recommended dataset IDs to explore.</p>
+              <p class="public-only">Short story: plants have been grown in space to study how they respond to microgravity and to learn how to grow food on future missions.</p>
+              <a class="btn" href="https://genelab.nasa.gov/" target="_blank" rel="noopener">Open GeneLab</a>
+            </article>
+
+            <article class="tutorial" tabindex="0">
+              <h4>Microbes in space</h4>
+              <p class="student-only">Small organisms like bacteria behave differently in space. Learn why scientists study them on the ISS.</p>
+              <p class="researcher-only">Contains links to microbial experiments, sequence datasets, and microbiome studies archived at NASA portals.</p>
+              <p class="public-only">Short summary: studying microbes helps keep astronauts healthy and informs planetary protection policies.</p>
+              <a class="btn" href="https://data.nasa.gov/" target="_blank" rel="noopener">Open NASA Open Data Portal</a>
+            </article>
+
+          </div>
+        </section>
+
+        <footer>
+          <p>Starter site uses only NASA resources for content links. Edit the tutorials to expand summaries, add images, or attach dataset links from GeneLab/NTRS.</p>
+        </footer>
+      </main>
+
+      <aside>
+        <div class="card">
+          <h3>NASA resource links</h3>
+          <div class="links">
+            <a href="https://lsda.jsc.nasa.gov/" target="_blank" rel="noopener">Life Sciences Data Archive (LSDA)</a>
+            <a href="https://www.nasa.gov/space-biology" target="_blank" rel="noopener">NASA Space Biology</a>
+            <a href="https://ntrs.nasa.gov/" target="_blank" rel="noopener">NASA Technical Reports Server (NTRS)</a>
+            <a href="https://humanresearchroadmap.nasa.gov/" target="_blank" rel="noopener">NASA Human Research Program (HRP)</a>
+            <a href="https://data.nasa.gov/" target="_blank" rel="noopener">NASA Open Data Portal</a>
+            <a href="https://genelab.nasa.gov/" target="_blank" rel="noopener">NASA GeneLab</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Quick publish</h3>
+          <ol style="color:var(--muted);font-size:0.95rem;padding-left:18px;margin:0">
+            <li>Create GitHub repo named <code>yourusername.github.io</code></li>
+            <li>Upload this file as <code>index.html</code></li>
+            <li>Visit https://yourusername.github.io to see it live</li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <h3>Notes</h3>
+          <p style="color:var(--muted);font-size:0.95rem;margin:0">All content links point to NASA sources. For richer interactivity (dataset downloads, charts), integrate NASA Data/GeneLab APIs later.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // Mode toggle
+    const studentBtn = document.getElementById('studentBtn');
+    const researcherBtn = document.getElementById('researcherBtn');
+    const publicBtn = document.getElementById('publicBtn');
+
+    function setMode(mode){
+      document.body.classList.remove('student','researcher','public');
+      document.body.classList.add(mode);
+      [studentBtn,researcherBtn,publicBtn].forEach(b=>b.classList.remove('active'));
+      if(mode==='student') studentBtn.classList.add('active');
+      if(mode==='researcher') researcherBtn.classList.add('active');
+      if(mode==='public') publicBtn.classList.add('active');
+      localStorage.setItem('ah_mode', mode);
+    }
+
+    studentBtn.onclick = ()=>setMode('student');
+    researcherBtn.onclick = ()=>setMode('researcher');
+    publicBtn.onclick = ()=>setMode('public');
+
+    // Restore mode
+    const saved = localStorage.getItem('ah_mode');
+    if(saved) setMode(saved);
+
+    // Search: site-limited Google search for NASA domains
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    function runSearch(){
+      const q = (searchInput.value||'').trim();
+      if(!q) return; // ignore empty
+      const query = encodeURIComponent('site:nasa.gov ' + q);
+      const url = 'https://www.google.com/search?q=' + query;
+      window.open(url, '_blank');
+    }
+
+    searchBtn.addEventListener('click', runSearch);
+    searchInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') runSearch(); });
+  </script>
+</body>
+</html>
